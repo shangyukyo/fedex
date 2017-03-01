@@ -328,7 +328,59 @@ module Fedex
       # Add customs clearance(for international shipments)
       def add_customs_clearance(xml)
         xml.CustomsClearanceDetail{
+          add_importer_of_record(xml)
+          add_duties_payment(xml)
           hash_to_xml(xml, @customs_clearance_detail)
+        }
+      end
+
+      def add_importer_of_record(xml)
+        xml.ImporterOfRecord {
+          xml.AccountNumber @payment_options[:account_number] || @credentials.account_number
+          
+          xml.Contact {
+            xml.PersonName @payment_options[:name] || @shipper[:name]
+            xml.CompanyName @payment_options[:company] || @shipper[:company]
+            xml.PhoneNumber @payment_options[:phone_number] || @shipper[:phone_number]
+          }
+          
+          xml.Address {
+            Array(@recipient[:address]).take(2).each do |address_line|
+              xml.StreetLines address_line
+            end
+            xml.City @recipient[:city]
+            xml.StateOrProvinceCode @recipient[:state]
+            xml.PostalCode @recipient[:postal_code]
+            xml.CountryCode @recipient[:country_code]
+            xml.Residential @recipient[:residential]
+          }
+        }
+      end
+
+      def add_duties_payment(xml)
+        xml.DutiesPayment {
+          xml.PaymentType @payment_options[:type] || "SENDER"
+          
+          xml.Payor {
+            xml.ResponsibleParty {
+              xml.AccountNumber @payment_options[:account_number] || @credentials.account_number
+              xml.Contact {
+                xml.PersonName @payment_options[:name] || @shipper[:name]
+                xml.CompanyName @payment_options[:company] || @shipper[:company]
+                xml.PhoneNumber @payment_options[:phone_number] || @shipper[:phone_number]
+              }
+              xml.Address {
+                Array(@recipient[:address]).take(2).each do |address_line|
+                  xml.StreetLines address_line
+                end
+                xml.City @recipient[:city]
+                xml.StateOrProvinceCode @recipient[:state]
+                xml.PostalCode @recipient[:postal_code]
+                xml.CountryCode @recipient[:country_code]
+                xml.Residential @recipient[:residential]
+              }
+            }
+          }
         }
       end
 

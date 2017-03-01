@@ -50,7 +50,7 @@ module Fedex
           add_special_services(xml) if @shipping_options[:return_reason] || @shipping_options[:cod] || @shipping_options[:saturday_delivery]
           add_customs_clearance(xml) if @customs_clearance_detail
           add_custom_components(xml)
-          xml.RateRequestTypes "ACCOUNT"
+          xml.RateRequestTypes "LIST"
           add_packages(xml)
         }
       end
@@ -150,7 +150,9 @@ module Fedex
             add_requested_shipment(xml)
           }
         end
-        builder.doc.root.to_xml
+        xml = builder.doc.root.to_xml
+        puts xml if @debug == true
+        xml
       end
 
       def service
