@@ -8,9 +8,10 @@ module Fedex
       attr_reader :package_type, :package_id
 
       def initialize(credentials, options={})
+        @debug = options[:debug]
         requires!(options, :package_type, :package_id) unless options.has_key?(:tracking_number)
 
-        @package_id   = options[:package_id]   || options.delete(:tracking_number)
+        @package_id   = options[:package_id]   || options[:tracking_number]
         @package_type = options[:package_type] || "TRACKING_NUMBER_OR_DOORTAG"
         @credentials  = credentials
 
@@ -69,7 +70,9 @@ module Fedex
             xml.PagingToken                    @paging_token if @paging_token
           }
         end
-        builder.doc.root.to_xml
+        xml = builder.doc.root.to_xml
+        puts xml if @debug
+        xml
       end
 
       def service

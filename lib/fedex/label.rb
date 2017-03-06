@@ -23,12 +23,12 @@ module Fedex
       @image = Base64.decode64(options[:parts][:image]) if has_image?
 
       if file_name = @options[:file_name]
-        save(file_name, false)
+        save(file_name, true)
       end
     end
 
     def name
-      [tracking_number, format].join('.')
+      [tracking_number, format.downcase].join('.')
     end
 
     def format
@@ -50,8 +50,9 @@ module Fedex
     def save(path, append_name = true)
       return unless has_image?
 
-      full_path = Pathname.new(path)
-      full_path = full_path.join(name) if append_name
+      # full_path = Pathname.new(path)
+      # full_path = full_path.join(name) if append_name
+      full_path = "#{path}_#{name}"
 
       File.open(full_path, 'wb') do|f|
         f.write(@image)
