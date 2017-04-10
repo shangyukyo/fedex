@@ -44,6 +44,7 @@ module Fedex
             add_package_details(xml)
           }
         end
+        puts builder.doc.root.to_xml if @debug
         builder.doc.root.to_xml
       end
 
@@ -60,6 +61,7 @@ module Fedex
           else
             xml.UseAccountAddress true
           end
+          xml.PackageLocation 'NONE'
           xml.ReadyTimestamp @ready_timestamp
           xml.CompanyCloseTime @close_time.strftime("%H:%M:%S")
         }
