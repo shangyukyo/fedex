@@ -16,6 +16,7 @@ module Fedex
         @pickup_location = options[:pickup_location]
         @commodity_description = options[:commodity_description] if options[:commodity_description]
         @country_relationship = options[:country_relationship]
+        @package_location = options[:package_location] || 'NONE'
       end
 
       # Sends post request to Fedex web service and parse the response, a Pickup object is created if the response is successful
@@ -61,7 +62,7 @@ module Fedex
           else
             xml.UseAccountAddress true
           end
-          xml.PackageLocation 'NONE'
+          xml.PackageLocation @package_location
           xml.ReadyTimestamp @ready_timestamp
           xml.CompanyCloseTime @close_time.strftime("%H:%M:%S")
         }
