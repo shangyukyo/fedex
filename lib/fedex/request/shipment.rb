@@ -16,6 +16,7 @@ module Fedex
         }
         @label_specification.merge! options[:label_specification] if options[:label_specification]
         @customer_specified_detail = options[:customer_specified_detail] if options[:customer_specified_detail]
+        @shipping_document_specification = options[:shipping_document_specification] if options[:shipping_document_specification]
       end
 
       # Sends post request to Fedex web service and parse the response.
@@ -50,6 +51,7 @@ module Fedex
           add_special_services(xml) if @shipping_options[:return_reason] || @shipping_options[:cod] || @shipping_options[:saturday_delivery]
           add_customs_clearance(xml) if @customs_clearance_detail
           add_custom_components(xml)
+          add_shipping_document_specification(xml) if @shipping_document_specification
           xml.RateRequestTypes "LIST"
           add_packages(xml)
         }
@@ -125,6 +127,10 @@ module Fedex
         }
       end
 
+      def add_shipping_document_specification(xml)
+        xml.ShippingDocumentSpecification{ hash_to_xml(xml, @shipping_document_specification) }
+      end
+
       # Callback used after a failed shipment response.
       def failure_response(api_response, response)
         error_message = if response[:process_shipment_reply]
@@ -148,7 +154,7 @@ module Fedex
             add_client_detail(xml)
             add_version(xml)
             add_requested_shipment(xml)
-          }
+          }          
         end
         xml = builder.doc.root.to_xml
         puts xml if @debug == true
