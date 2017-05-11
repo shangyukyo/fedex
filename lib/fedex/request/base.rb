@@ -51,10 +51,12 @@ module Fedex
         requires!(options, :shipper, :recipient, :packages)
         @credentials = credentials
         @shipper, @recipient, @packages, @service_type, @customs_clearance_detail = options[:shipper], options[:recipient], options[:packages], options[:service_type], options[:customs_clearance_detail]
+        @shipping_document_specification = options[:shipping_document_specification] if options[:shipping_document_specification]
         @origin = options[:origin]
         @debug = options[:debug] === true
         @shipping_options =  options[:shipping_options] ||={}
         @payment_options = options[:payment_options] ||={}
+        @sold_to = options[:sold_to]
         requires!(@payment_options, :type, :account_number, :name, :company, :phone_number, :country_code) if @payment_options.length > 0
         if options.has_key?(:mps)
           @mps = options[:mps]
@@ -116,6 +118,7 @@ module Fedex
           xml.PackagingType @shipping_options[:packaging_type] ||= "YOUR_PACKAGING"
           add_shipper(xml)
           add_recipient(xml)
+          # add_sold_to(xml) if @sold_to
           add_shipping_charges_payment(xml)
           add_customs_clearance(xml) if @customs_clearance_detail
           xml.RateRequestTypes "ACCOUNT"
@@ -328,7 +331,7 @@ module Fedex
       # Add customs clearance(for international shipments)
       def add_customs_clearance(xml)
         xml.CustomsClearanceDetail{
-          add_importer_of_record(xml)
+          # add_importer_of_record(xml)
           add_duties_payment(xml)
           hash_to_xml(xml, @customs_clearance_detail)
         }
@@ -339,9 +342,9 @@ module Fedex
           xml.AccountNumber @payment_options[:account_number] || @credentials.account_number
           
           xml.Contact {
-            xml.PersonName @payment_options[:name] || @shipper[:name]
-            xml.CompanyName @payment_options[:company] || @shipper[:company]
-            xml.PhoneNumber @payment_options[:phone_number] || @shipper[:phone_number]
+            xml.PersonName @payment_options[:name] || @recipient[:name]
+            xml.CompanyName @payment_options[:company] || @recipient[:company]
+            xml.PhoneNumber @payment_options[:phone_number] || @recipients[:phone_number]
           }
           
           xml.Address {
@@ -357,17 +360,37 @@ module Fedex
         }
       end
 
+      def add_sold_to(xml)
+        xml.SoldTo{
+          xml.Contact{
+            xml.PersonName @recipient[:name]
+            xml.CompanyName @recipient[:company]
+            xml.PhoneNumber @recipient[:phone_number]
+          }
+          xml.Address {
+            Array(@recipient[:address]).take(2).each do |address_line|
+              xml.StreetLines address_line
+            end
+            xml.City @recipient[:city]
+            xml.StateOrProvinceCode @recipient[:state]
+            xml.PostalCode @recipient[:postal_code]
+            xml.CountryCode @recipient[:country_code]
+            xml.Residential @recipient[:residential]
+          }
+        }
+      end
+
       def add_duties_payment(xml)
         xml.DutiesPayment {
-          xml.PaymentType @payment_options[:type] || "SENDER"
+          xml.PaymentType @payment_options[:type] || "RECIPIENT"
           
           xml.Payor {
             xml.ResponsibleParty {
               xml.AccountNumber @payment_options[:account_number] || @credentials.account_number
               xml.Contact {
-                xml.PersonName @payment_options[:name] || @shipper[:name]
-                xml.CompanyName @payment_options[:company] || @shipper[:company]
-                xml.PhoneNumber @payment_options[:phone_number] || @shipper[:phone_number]
+                xml.PersonName @payment_options[:name] || @recipient[:name]
+                xml.CompanyName @payment_options[:company] || @recipient[:company]
+                xml.PhoneNumber @payment_options[:phone_number] || @recipient[:phone_number]
               }
               xml.Address {
                 Array(@recipient[:address]).take(2).each do |address_line|

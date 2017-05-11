@@ -39,11 +39,17 @@ module Fedex
           xml.PackagingType @shipping_options[:packaging_type] ||= "YOUR_PACKAGING"
           add_shipper(xml)
           add_recipient(xml)
+          # add_sold_to(xml) if @sold_to
           add_shipping_charges_payment(xml)
           add_customs_clearance(xml) if @customs_clearance_detail
+          add_shipping_document_specification(xml) if @shipping_document_specification
           xml.RateRequestTypes "LIST"
           add_packages(xml)
         }
+      end
+
+      def add_shipping_document_specification(xml)
+        xml.ShippingDocumentSpecification{ hash_to_xml(xml, @shipping_document_specification) }
       end
 
       # Add transit time options

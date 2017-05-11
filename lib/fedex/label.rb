@@ -11,13 +11,15 @@ module Fedex
       if associated_shipments
         package_details = label_details
         @options = package_details[:label]
-        @document_options = label_details[:package_documents]
+        @document_options = package_details[:package_documents]
+        @shipment_documents = label_details[:shipment_documents]
         @options[:tracking_number] = package_details[:tracking_id]
       else
         @response_details = label_details[:process_shipment_reply]
         package_details = label_details[:process_shipment_reply][:completed_shipment_detail][:completed_package_details]
         @options = package_details[:label]
         @document_options = package_details[:package_documents]
+        @shipment_documents = label_details[:process_shipment_reply][:completed_shipment_detail][:shipment_documents]
         @options[:tracking_number] = package_details[:tracking_ids][:tracking_number]
       end
       @options[:format] = label_details[:format]
@@ -42,12 +44,33 @@ module Fedex
         end
       end
 
+      if has_commercial_invoice?
+        name = "#{tracking_number}_commercialinvoice.#{format.downcase}"
+        image = Base64.decode64(@shipment_documents[:parts][:image]) 
+        filename = [file_path, name].join('_')
+        filename_ary << filename
+        save(image, filename)
+
+        [1,2].each do |ind|
+          copy_name = "#{tracking_number}_commercialinvoice_#{ind}.#{format.downcase}"
+          copy = [file_path, copy_name].join('_')
+          filename_ary << copy
+          FileUtils.cp filename, copy
+        end
+      end
+
       if format.downcase == 'png'
         Prawn::Document.generate("#{file_path}_#{tracking_number}.pdf", page_size: [288,432], :margin => [0,0,0,0]) do |pdf|
           filename_ary.each do |png_path|
             pdf.image png_path, fit: [288, 432], position: :center
           end
         end
+      else
+        pdf = CombinePDF.new
+        filename_ary.each do |file|
+          pdf << CombinePDF.load(file) # one way to combine, very fast.
+        end
+        pdf.save "#{file_path}_#{tracking_number}.pdf"
       end
     end
 
@@ -73,6 +96,10 @@ module Fedex
 
     def has_documents?
       @document_options.present?
+    end
+
+    def has_commercial_invoice?
+      @shipment_documents.present?
     end
 
     def save(image, filename)

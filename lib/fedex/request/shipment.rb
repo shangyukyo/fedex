@@ -16,7 +16,6 @@ module Fedex
         }
         @label_specification.merge! options[:label_specification] if options[:label_specification]
         @customer_specified_detail = options[:customer_specified_detail] if options[:customer_specified_detail]
-        @shipping_document_specification = options[:shipping_document_specification] if options[:shipping_document_specification]
       end
 
       # Sends post request to Fedex web service and parse the response.
@@ -47,6 +46,7 @@ module Fedex
           add_shipper(xml)
           add_origin(xml) if @origin
           add_recipient(xml)
+          # add_sold_to(xml) if @sold_to
           add_shipping_charges_payment(xml)
           add_special_services(xml) if @shipping_options[:return_reason] || @shipping_options[:cod] || @shipping_options[:saturday_delivery]
           add_customs_clearance(xml) if @customs_clearance_detail
