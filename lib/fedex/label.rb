@@ -106,7 +106,7 @@ module Fedex
       # full_path = Pathname.new(path)
       # full_path = full_path.join(name) if append_name
 
-      File.open(filename, 'wb') do|f|
+      File.open(filename, 'wb') do |f|
         f.write(image)
       end
     end

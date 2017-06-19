@@ -77,6 +77,11 @@ module Fedex
           xml.LabelFormatType @label_specification[:label_format_type]
           xml.ImageType @label_specification[:image_type]
           xml.LabelStockType @label_specification[:label_stock_type]
+
+          if @label_specification[:label_printing_orientation]
+            xml.LabelPrintingOrientation @label_specification[:label_printing_orientation]
+          end
+          
           xml.CustomerSpecifiedDetail{ hash_to_xml(xml, @customer_specified_detail) } if @customer_specified_detail
 
           if @label_specification[:printed_label_origin] && @label_specification[:printed_label_origin][:address]

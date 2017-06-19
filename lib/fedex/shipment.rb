@@ -6,6 +6,7 @@ require 'fedex/request/address'
 require 'fedex/request/document'
 require 'fedex/request/delete'
 require 'fedex/request/ground_close'
+require 'fedex/request/cancel_pickup'
 require 'fedex/request/pickup'
 require 'fedex/request/pickup_availability'
 require 'fedex/request/service_availability'
@@ -64,6 +65,10 @@ module Fedex
     # @param [Hash] pickup_location, A hash containing the pickup location information
     def pickup(options = {})
       Request::Pickup.new(@credentials, options).process_request
+    end
+
+    def cancel_pickup(options = {})
+      Request::CancelPickup.new(@credentials, options).process_request
     end
 
     # @param [Hash] package_id, A string with the requested tracking number
