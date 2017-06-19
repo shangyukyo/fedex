@@ -11,6 +11,7 @@ module Fedex
         @scheduled_date = options[:scheduled_date]
         @location = options[:location]
         @carrier_code = options[:carrier_code]
+        @remarks = options[:remarks]
       end
 
       def process_request
@@ -37,7 +38,8 @@ module Fedex
             xml.CarrierCode @carrier_code
             xml.PickupConfirmationNumber @pickup_confirmation_number
             xml.ScheduledDate @scheduled_date
-            xml.Location(@location) if @location              
+            xml.Location(@location) if @location
+            xml.Remarks(@remarks) if @remarks       
           }
         end
         puts builder.doc.root.to_xml if @debug
