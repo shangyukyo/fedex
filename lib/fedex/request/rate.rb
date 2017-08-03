@@ -43,6 +43,11 @@ module Fedex
           add_shipping_charges_payment(xml)
           add_customs_clearance(xml) if @customs_clearance_detail
           add_shipping_document_specification(xml) if @shipping_document_specification
+
+          if @recipient[:country_code] == 'US' && @packages.count == 1
+            add_smart_post(xml)
+          end
+          
           xml.RateRequestTypes "LIST"
           add_packages(xml)
         }

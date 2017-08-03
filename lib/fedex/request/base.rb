@@ -57,6 +57,7 @@ module Fedex
         @shipping_options =  options[:shipping_options] ||={}
         @payment_options = options[:payment_options] ||={}
         @sold_to = options[:sold_to]
+        # @smart_post_detail = options[:smart_post_detail]
         requires!(@payment_options, :type, :account_number, :name, :company, :phone_number, :country_code) if @payment_options.length > 0
         if options.has_key?(:mps)
           @mps = options[:mps]
@@ -404,6 +405,14 @@ module Fedex
               }
             }
           }
+        }
+      end
+
+      def add_smart_post(xml)
+        xml.SmartPostDetail {
+          xml.Indicia 'PARCEL_SELECT'
+          xml.AncillaryEndorsement 'CARRIER_LEAVE_IF_NO_RESPONSE'
+          xml.HubId @credentials.hubid
         }
       end
 

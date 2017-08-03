@@ -50,6 +50,9 @@ module Fedex
           add_shipping_charges_payment(xml)
           add_special_services(xml) if @shipping_options[:return_reason] || @shipping_options[:cod] || @shipping_options[:saturday_delivery]
           add_customs_clearance(xml) if @customs_clearance_detail
+          if service_type == 'SMART_POST'
+            add_smart_post(xml)
+          end
           add_custom_components(xml)
           add_shipping_document_specification(xml) if @shipping_document_specification
           xml.RateRequestTypes "LIST"

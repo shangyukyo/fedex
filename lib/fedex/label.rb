@@ -20,7 +20,11 @@ module Fedex
         @options = package_details[:label]
         @document_options = package_details[:package_documents]
         @shipment_documents = label_details[:process_shipment_reply][:completed_shipment_detail][:shipment_documents]
-        @options[:tracking_number] = package_details[:tracking_ids][:tracking_number]
+        @options[:tracking_number] = if package_details[:tracking_ids].is_a?(Hash)
+          package_details[:tracking_ids][:tracking_number]
+        else
+          package_details[:tracking_ids].last[:tracking_number]
+        end
       end
       @options[:format] = label_details[:format]
       @options[:file_path] = label_details[:file_name]
