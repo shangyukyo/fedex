@@ -340,7 +340,7 @@ module Fedex
 
       def add_importer_of_record(xml)
         xml.ImporterOfRecord {
-          xml.AccountNumber @payment_options[:account_number] || @credentials.account_number
+          # xml.AccountNumber @payment_options[:account_number] || @credentials.account_number
           
           xml.Contact {
             xml.PersonName @payment_options[:name] || @recipient[:name]
@@ -385,33 +385,33 @@ module Fedex
         xml.DutiesPayment {
           xml.PaymentType @payment_options[:type] || "RECIPIENT"
           
-          xml.Payor {
-            xml.ResponsibleParty {
-              xml.AccountNumber @payment_options[:account_number] || @credentials.account_number
-              xml.Contact {
-                xml.PersonName @payment_options[:name] || @recipient[:name]
-                xml.CompanyName @payment_options[:company] || @recipient[:company]
-                xml.PhoneNumber @payment_options[:phone_number] || @recipient[:phone_number]
-              }
-              xml.Address {
-                Array(@recipient[:address]).take(2).each do |address_line|
-                  xml.StreetLines address_line
-                end
-                xml.City @recipient[:city]
-                xml.StateOrProvinceCode @recipient[:state]
-                xml.PostalCode @recipient[:postal_code]
-                xml.CountryCode @recipient[:country_code]
-                xml.Residential @recipient[:residential]
-              }
-            }
-          }
+          # xml.Payor {
+          #   xml.ResponsibleParty {
+          #     xml.AccountNumber @payment_options[:account_number] || @credentials.account_number
+          #     xml.Contact {
+          #       xml.PersonName @payment_options[:name] || @recipient[:name]
+          #       xml.CompanyName @payment_options[:company] || @recipient[:company]
+          #       xml.PhoneNumber @payment_options[:phone_number] || @recipient[:phone_number]
+          #     }
+          #     xml.Address {
+          #       Array(@recipient[:address]).take(2).each do |address_line|
+          #         xml.StreetLines address_line
+          #       end
+          #       xml.City @recipient[:city]
+          #       xml.StateOrProvinceCode @recipient[:state]
+          #       xml.PostalCode @recipient[:postal_code]
+          #       xml.CountryCode @recipient[:country_code]
+          #       xml.Residential @recipient[:residential]
+          #     }
+          #   }
+          # }
         }
       end
 
       def add_smart_post(xml)
         xml.SmartPostDetail {
           xml.Indicia 'PARCEL_SELECT'
-          xml.AncillaryEndorsement 'CARRIER_LEAVE_IF_NO_RESPONSE'
+          # xml.AncillaryEndorsement 'CARRIER_LEAVE_IF_NO_RESPONSE'
           xml.HubId @credentials.hubid
         }
       end
