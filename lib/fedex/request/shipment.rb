@@ -64,7 +64,7 @@ module Fedex
         if @mps.has_key? :total_weight
           xml.TotalWeight{
             xml.Units @mps[:total_weight][:units]
-            xml.Value @mps[:total_weight][:value]
+            xml.Value @mps[:total_weight][:value].to_f.round(3)
           }
         end
       end
