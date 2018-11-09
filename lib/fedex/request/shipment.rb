@@ -23,9 +23,12 @@ module Fedex
       # The parsed Fedex response is available in #response_details
       # e.g. response_details[:completed_shipment_detail][:completed_package_details][:tracking_ids][:tracking_number]
       def process_request
+        # File.open('/Users/macbookpro/Workspaces/fedex_request', 'w+'){|f| f.puts build_xml}        
         api_response = self.class.post api_url, :body => build_xml
         puts api_response if @debug
         response = parse_response(api_response)
+
+        # File.open('/Users/macbookpro/Workspaces/fedex_response', 'w+'){|f| f.puts response}
         if success?(response)
           success_response(api_response, response)
         else
@@ -170,7 +173,7 @@ module Fedex
       end
 
       def service
-        { :id => 'ship', :version => Fedex::API_VERSION }
+        { :id => 'ship', :version => Fedex::SHIP_API_VERSION }        
       end
 
       # Successful request
