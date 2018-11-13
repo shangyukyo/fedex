@@ -6,18 +6,20 @@ module Fedex
 
       attr_reader :tracking_number
 
-      def initialize(credentials, options={})
+      def initialize(credentials, options={})        
         requires!(options, :tracking_number)
 
+        @debug = options[:debug]
         @tracking_number  = options[:tracking_number]
         @deletion_control = options[:deletion_control] || 'DELETE_ALL_PACKAGES'
         @credentials  = credentials
       end
 
       def process_request
+        puts build_xml
         api_response = self.class.post(api_url, :body => build_xml)
         puts api_response if @debug == true
-        response = parse_response(api_response)
+        response = parse_response(api_response)      
         unless success?(response)
           error_message = if response[:shipment_reply]
             [response[:shipment_reply][:notifications]].flatten.first[:message]
