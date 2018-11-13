@@ -9,6 +9,7 @@ module Fedex
         super
         requires!(options, :service_type)
         # Label specification is required even if we're not using it.
+
         @label_specification = {
           :label_format_type => 'COMMON2D',
           :image_type => 'PDF',
@@ -24,6 +25,10 @@ module Fedex
       # e.g. response_details[:completed_shipment_detail][:completed_package_details][:tracking_ids][:tracking_number]
       def process_request
         # File.open('/Users/macbookpro/Workspaces/fedex_request', 'w+'){|f| f.puts build_xml}        
+        puts build_xml
+        5.times do 
+          puts "********"
+        end
         api_response = self.class.post api_url, :body => build_xml
         puts api_response if @debug
         response = parse_response(api_response)

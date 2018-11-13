@@ -48,13 +48,13 @@ module Fedex
         end
       end
 
-      if has_commercial_invoice?
-        name = "#{tracking_number}_commercialinvoice.#{format.downcase}"
+      if has_commercial_invoice?        
+        name = "#{tracking_number}_commercialinvoice.#{format.downcase}"        
         image = Base64.decode64(@shipment_documents[:parts][:image]) 
         filename = [file_path, name].join('_')
-        filename_ary << filename
+        filename_ary << filename        
         save(image, filename)
-
+        
         [1,2].each do |ind|
           copy_name = "#{tracking_number}_commercialinvoice_#{ind}.#{format.downcase}"
           copy = [file_path, copy_name].join('_')

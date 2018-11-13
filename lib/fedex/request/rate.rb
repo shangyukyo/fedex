@@ -80,7 +80,7 @@ module Fedex
       end
 
       def service
-        { :id => 'crs', :version => Fedex::API_VERSION }
+        { :id => 'crs', :version => Fedex::RATE_API_VERSION }
       end
 
       # Successful request

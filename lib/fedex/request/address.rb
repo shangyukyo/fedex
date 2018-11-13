@@ -5,21 +5,24 @@ require 'fileutils'
 module Fedex
   module Request
     class Address < Base
-      def initialize(credentials, options={})
+      def initialize(credentials, options={})        
         requires!(options, :address)
+        @debug = options[:debug] == true
         @credentials = credentials
         @address     = options[:address]
-
         @address[:address] ||= @address[:street]
       end
 
-      def process_request
-        api_response = self.class.post(api_url, :body => build_xml)
+      def process_request        
+        api_response = self.class.post(api_url, :body => build_xml)        
         puts api_response if @debug == true
         response = parse_response(api_response)
+
         if success?(response)
-          options = response[:address_validation_reply][:address_results][:proposed_address_details]
+
+          options = response[:address_validation_reply][:address_results]
           options = options.first if options.is_a? Array
+
           Fedex::Address.new(options)
         else
           error_message = if response[:address_validation_reply]
@@ -40,8 +43,7 @@ module Fedex
             add_web_authentication_detail(xml)
             add_client_detail(xml)
             add_version(xml)
-            add_request_timestamp(xml)
-            add_address_validation_options(xml)
+            add_request_timestamp(xml)            
             add_address_to_validate(xml)
           }
         end
@@ -58,7 +60,7 @@ module Fedex
                      (timestamp.gmt_offset / 60).abs.divmod(60)
         timestamp  = timestamp.strftime("%Y-%m-%dT%H:%M:%S") + utc_offest
 
-        xml.RequestTimestamp timestamp
+        xml.InEffectAsOfTimestamp timestamp
       end
 
       def add_address_validation_options(xml)
@@ -77,13 +79,13 @@ module Fedex
             xml.City                @address[:city]
             xml.StateOrProvinceCode @address[:state]
             xml.PostalCode          @address[:postal_code]
-            xml.CountryCode         @address[:country]
+            xml.CountryCode         @address[:country_code]
           }
         }
       end
 
       def service
-        { :id => 'aval', :version => 2 }
+        { :id => 'aval', :version => Fedex::ADDRESS_API_VERSION }
       end
 
       # Successful request
