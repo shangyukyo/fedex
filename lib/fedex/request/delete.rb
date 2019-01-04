@@ -15,10 +15,9 @@ module Fedex
         @credentials  = credentials
       end
 
-      def process_request
-        puts build_xml
+      def process_request        
         api_response = self.class.post(api_url, :body => build_xml)
-        puts api_response if @debug == true
+        puts api_response if @debug == true        
         response = parse_response(api_response)      
         unless success?(response)
           error_message = if response[:shipment_reply]
@@ -51,7 +50,7 @@ module Fedex
       end
 
       def service
-        { :id => 'ship', :version => Fedex::API_VERSION }
+        { :id => 'ship', :version => Fedex::SHIP_API_VERSION }
       end
 
       # Successful request
