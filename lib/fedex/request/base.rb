@@ -128,12 +128,16 @@ module Fedex
       end
 
       # Add shipper to xml request
-      def add_shipper(xml)
+      def add_shipper(xml)      
         xml.Shipper{
           xml.Contact{
             xml.PersonName @shipper[:name]
             xml.CompanyName @shipper[:company]
             xml.PhoneNumber @shipper[:phone_number]
+
+            if !@shipper[:email].blank?
+              xml.EMailAddress @shipper[:email]
+            end              
           }
           xml.Address {
             Array(@shipper[:address]).take(2).each do |address_line|
@@ -153,10 +157,7 @@ module Fedex
           xml.Contact{
             xml.PersonName @origin[:name]
             xml.CompanyName @origin[:company]
-            xml.PhoneNumber @origin[:phone_number]
-            if !@origin[:email].blank?
-              xml.EMailAddress @origin[:email]
-            end            
+            xml.PhoneNumber @origin[:phone_number]          
           }
           xml.Address {
             Array(@origin[:address]).take(2).each do |address_line|
