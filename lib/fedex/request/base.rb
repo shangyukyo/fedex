@@ -416,11 +416,11 @@ module Fedex
       end
 
       def add_smart_post(xml)
-        xml.SmartPostDetail {
-          xml.Indicia 'PARCEL_SELECT'
-          # xml.AncillaryEndorsement 'CARRIER_LEAVE_IF_NO_RESPONSE'
-          xml.HubId @credentials.hubid
-        }
+        # xml.SmartPostDetail {
+        #   xml.Indicia 'PARCEL_SELECT'
+        #   # xml.AncillaryEndorsement 'CARRIER_LEAVE_IF_NO_RESPONSE'
+        #   xml.HubId @credentials.hubid
+        # }
       end
 
       # Fedex Web Service Api
