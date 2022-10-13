@@ -56,7 +56,7 @@ module Fedex
           add_recipient(xml)
           # add_sold_to(xml) if @sold_to
           add_shipping_charges_payment(xml)
-          add_special_services(xml) if @shipping_options[:return_reason] || @shipping_options[:cod] || @shipping_options[:saturday_delivery]
+          add_special_services(xml) if @shipping_options[:return_reason] || @shipping_options[:cod] || @shipping_options[:saturday_delivery] || @shipping_options[:etd]         
           add_customs_clearance(xml) if @customs_clearance_detail
           if service_type == 'SMART_POST'
             add_smart_post(xml)
@@ -65,6 +65,7 @@ module Fedex
           add_shipping_document_specification(xml) if @shipping_document_specification
           xml.RateRequestTypes "LIST"
           add_packages(xml)
+
         }
       end
 
@@ -139,6 +140,17 @@ module Fedex
           end
           if @shipping_options[:saturday_delivery]
             xml.SpecialServiceTypes "SATURDAY_DELIVERY"
+          end
+
+          if @shipping_options[:etd]
+              xml.SpecialServiceTypes "ELECTRONIC_TRADE_DOCUMENTS"
+              xml.EtdDetail {
+                xml.RequestedDocumentCopies 'COMMERCIAL_INVOICE'
+                xml.DocumentReferences {
+                  xml.DocumentType 'COMMERCIAL_INVOICE'
+                }
+              }              
+
           end
         }
       end

@@ -10,6 +10,7 @@ require 'fedex/request/cancel_pickup'
 require 'fedex/request/pickup'
 require 'fedex/request/pickup_availability'
 require 'fedex/request/service_availability'
+require 'fedex/request/image'
 
 module Fedex
   class Shipment
@@ -116,5 +117,9 @@ module Fedex
       Request::ServiceAvailability.new(@credentials, options).process_request
     end
 
+
+    def upload_image(options={})
+      Request::Image.new(@credentials, options).process_request
+    end
   end
 end
