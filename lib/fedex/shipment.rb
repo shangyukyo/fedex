@@ -11,6 +11,8 @@ require 'fedex/request/pickup'
 require 'fedex/request/pickup_availability'
 require 'fedex/request/service_availability'
 require 'fedex/request/image'
+require 'fedex/request/upload_document'
+require 'fedex/request/pending_shipment'
 
 module Fedex
   class Shipment
@@ -120,6 +122,14 @@ module Fedex
 
     def upload_image(options={})
       Request::Image.new(@credentials, options).process_request
+    end
+
+    def upload_document(options = {})
+      Request::UploadDocument.new(@credentials, options).process_request
+    end
+
+    def pending_shipment(options = {})
+      Request::PendingShipment.new(@credentials, options).process_request
     end
   end
 end
