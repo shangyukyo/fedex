@@ -42,11 +42,6 @@ module Fedex
           xml.ShippingDocumentSpecification {
             xml.ShippingDocumentType 'COMMERCIAL_INVOICE'
           }
-          # xml.CustomsClearanceDetail {
-          #   xml.Commodities{
-          #     xml.NumberOfPieces 
-          #   }
-          # }
 
         }        
       end    

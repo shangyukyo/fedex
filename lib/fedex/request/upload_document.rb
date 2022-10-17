@@ -13,14 +13,14 @@ module Fedex
 
       def build_xml
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml.UploadDocumentsRequest(:xmlns => "http://fedex.com/ws/uploaddocument/v19"){
+          xml.UploadDocumentsRequest(:xmlns => "http://fedex.com/ws/uploaddocument/v1"){
             add_web_authentication_detail(xml)
             add_client_detail(xml)
 
             xml.Version {
               xml.ServiceId 'cdus'
-              xml.Major 19
-              xml.Intermediate 0
+              xml.Major 1
+              xml.Intermediate 1
               xml.Minor 0
             }       
             
@@ -38,7 +38,7 @@ module Fedex
         xml = builder.doc.root.to_xml
         puts xml if @debug == true
         xml
-      end
+      end      
 
       def process_request
         puts build_xml

@@ -13,6 +13,7 @@ require 'fedex/request/service_availability'
 require 'fedex/request/image'
 require 'fedex/request/upload_document'
 require 'fedex/request/pending_shipment'
+require 'fedex/request/etd'
 
 module Fedex
   class Shipment
@@ -130,6 +131,10 @@ module Fedex
 
     def pending_shipment(options = {})
       Request::PendingShipment.new(@credentials, options).process_request
+    end
+
+    def etd_document(options={})
+      Request::Etd.new(@credentials, options).process_request
     end
   end
 end
