@@ -143,14 +143,7 @@ module Fedex
           end
 
           if @shipping_options[:etd]
-              xml.SpecialServiceTypes "ELECTRONIC_TRADE_DOCUMENTS"
-              xml.EtdDetail {
-                xml.RequestedDocumentCopies 'COMMERCIAL_INVOICE'
-                xml.DocumentReferences {
-                  xml.DocumentType 'COMMERCIAL_INVOICE'
-                }
-              }              
-
+            xml.SpecialServiceTypes "ELECTRONIC_TRADE_DOCUMENTS"        
           end
         }
       end
