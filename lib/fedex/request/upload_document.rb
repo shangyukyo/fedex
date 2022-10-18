@@ -13,13 +13,13 @@ module Fedex
 
       def build_xml
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml.UploadDocumentsRequest(:xmlns => "http://fedex.com/ws/uploaddocument/v1"){
+          xml.UploadDocumentsRequest(:xmlns => "http://fedex.com/ws/uploaddocument/v19"){
             add_web_authentication_detail(xml)
             add_client_detail(xml)
 
             xml.Version {
               xml.ServiceId 'cdus'
-              xml.Major 1
+              xml.Major 19
               xml.Intermediate 1
               xml.Minor 0
             }       
@@ -32,6 +32,7 @@ module Fedex
               xml.CustomerReference 'COMMERCIAL_INVOICE'
               xml.FileName 'CI.pdf'
               xml.Content @document_base_64
+              xml.ExpirationDate (Time.now + 30.days).iso8601
             }
           }          
         end
