@@ -462,7 +462,7 @@ module Fedex
       end
 
       # Parse response, convert keys to underscore symbols
-      def parse_response(response)
+      def parse_response(response)        
         response = sanitize_response_keys(response.parsed_response)
       end
 

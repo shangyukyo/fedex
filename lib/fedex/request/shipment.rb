@@ -30,7 +30,7 @@ module Fedex
           puts "********"
         end
         api_response = self.class.post api_url, :body => build_xml
-        puts api_response if @debug
+        puts api_response.inspect if @debug        
         response = parse_response(api_response)
 
         # File.open('/Users/macbookpro/Workspaces/fedex_response', 'w+'){|f| f.puts response}
