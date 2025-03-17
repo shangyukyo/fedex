@@ -174,6 +174,15 @@ module Fedex
       # Add recipient to xml request
       def add_recipient(xml)
         xml.Recipient{
+          if @recipient[:tins].present?
+            xml.Tins{
+              Array(@recipient[:tins]).each do |tin|
+                xml.TinType tin[:tin_type]
+                xml.Number tin[:number]                
+              end
+            }
+          end   
+                    
           xml.Contact{
             xml.PersonName @recipient[:name]
             xml.CompanyName @recipient[:company]
